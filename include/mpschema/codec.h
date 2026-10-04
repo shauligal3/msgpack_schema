@@ -64,27 +64,12 @@ int mpschema_export_obj(const void *in_obj, const mpschema_t *schema, char *out_
  *
  * No bounds information is available, so the schema must not contain
  * arena-backed members (VARLEN_STRING, REFERS); use
- * mpschema_decode_varlen_obj_by_format() for those.
+ * mpschema_decode_varlen_obj() for those.
  *
  * @return ::mpschema_ok, ::mpschema_invalid_param or ::mpschema_malformed
  *         (also returned for trailing bytes after the map)
  */
 int mpschema_decode_obj(void *out_obj, const mpschema_t *schema, const char *in_buf, size_t sz);
-
-/**
- * @brief mpschema_encode_obj() followed by the requested wire @p format.
- */
-int mpschema_encode_obj_by_format(const void *in_obj, const mpschema_t *schema, char *out_buf,
-                                  size_t *sz, mpschema_format_t format);
-
-/**
- * @brief Removes the requested wire @p format, then decodes.
- *
- * For ::MPSCHEMA_MSGPACK_OBF the input is de-obfuscated in place and restored
- * before returning, so the buffer must be writable but is left unchanged.
- */
-int mpschema_decode_obj_by_format(void *out_obj, const mpschema_t *schema, char *in_buf, size_t sz,
-                                  mpschema_format_t format);
 
 /**
  * @brief Decodes into a buffer larger than the struct, using the extra space
@@ -96,8 +81,8 @@ int mpschema_decode_obj_by_format(void *out_obj, const mpschema_t *schema, char 
  * @return ::mpschema_ok, ::mpschema_no_space if the struct or its
  *         variable-length data does not fit, or another error code
  */
-int mpschema_decode_varlen_obj_by_format(void *out_obj, size_t out_obj_sz, const mpschema_t *schema,
-                                         char *in_buf, size_t sz, mpschema_format_t format);
+int mpschema_decode_varlen_obj(void *out_obj, size_t out_obj_sz, const mpschema_t *schema,
+                               const char *in_buf, size_t sz);
 
 #ifdef __cplusplus
 }

@@ -53,8 +53,6 @@ tested, and hardened project.
   `uint64` were printed as signed; arrays are now rendered as JSON arrays.
 - `mpschema_env_init` accepted `external_writer` without a writer callback.
 - `mpschema_get_header_max_size` never cached its result.
-- `mpschema_decode_obj_by_format` left obfuscated input de-obfuscated; the
-  caller's buffer is now restored.
 
 ### API changes
 - Schema and input-object parameters are now `const`.
@@ -70,5 +68,10 @@ tested, and hardened project.
   accepted when decoding.
 - `mpschema_env_cback_t::debug_cb` / `warning_cb`, when set, are installed
   as the process-wide logging hooks.
+- Removed the XOR obfuscation format (`MPSCHEMA_MSGPACK_OBF`) together with
+  `mpschema_format_t`, `mpschema_encode_obj_by_format` and
+  `mpschema_decode_obj_by_format`. It offered no real protection; use TLS
+  for confidentiality. `mpschema_decode_varlen_obj_by_format` is replaced by
+  `mpschema_decode_varlen_obj`, which takes a `const` input buffer.
 - Removed the undefined `mpschema_process_msgs` declaration and the internal
   `mpschema_test`, `mpschema_dump` and `g_mpschema_debug` symbols.

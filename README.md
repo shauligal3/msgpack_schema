@@ -153,7 +153,7 @@ Include `<mpschema/mpschema.h>`. Every header is documented in Doxygen style.
 
 | Area | Functions | Header |
 |---|---|---|
-| One-shot codec | `mpschema_encode_obj`, `mpschema_decode_obj`, `mpschema_decode_varlen_obj_by_format`, `mpschema_export_obj`, `mpschema_validate` | [`codec.h`](include/mpschema/codec.h) |
+| One-shot codec | `mpschema_encode_obj`, `mpschema_decode_obj`, `mpschema_decode_varlen_obj`, `mpschema_export_obj`, `mpschema_validate` | [`codec.h`](include/mpschema/codec.h) |
 | Streaming (v2) | `mpschema_env_init`, `mpschema_env_feed`, `mpschema_env_next`, `mpschema_env_next_decode`, `mpschema_env_encode` | [`env.h`](include/mpschema/env.h) |
 | Sockets | `mpschema_xmit_obj`, `mpschema_pipe_alloc`, `mpschema_pipe_process` | [`transport.h`](include/mpschema/transport.h) |
 | Framing | `mpschema_encode_header`, `mpschema_decode_header` | [`header.h`](include/mpschema/header.h) |
@@ -189,8 +189,7 @@ struct, so a whole message lives in one buffer and is freed in one go:
 
 ```c
 union { demo_doc_t doc; char bytes[sizeof(demo_doc_t) + 512]; } out = {0};
-mpschema_decode_varlen_obj_by_format(&out, sizeof(out), &doc_schema, buf, len,
-                                     MPSCHEMA_MSGPACK_CLEAR);
+mpschema_decode_varlen_obj(&out, sizeof(out), &doc_schema, buf, len);
 printf("%s\n", out.doc.title);   /* points into out.bytes */
 ```
 
@@ -213,10 +212,6 @@ v2:  { 0: <object type>, 1: 3, 2: 4, 3: "home" }
 The socket helpers frame each message as `[type][length][payload]`, where
 `type` and `length` are MessagePack unsigned integers (2 to 6 bytes in total).
 v2 streams need no framing because every object carries its type.
-
-`MPSCHEMA_MSGPACK_OBF` applies a rolling XOR to the payload. It deters casual
-inspection only and is **not encryption**: use TLS when confidentiality
-matters.
 
 ## Security
 

@@ -46,17 +46,6 @@ typedef enum {
 /** Older name of ::mpschema_status_t, kept for source compatibility. */
 typedef mpschema_status_t mpschema_env_status_t;
 
-/**
- * @brief Wire formats understood by the `*_by_format` helpers.
- */
-typedef enum {
-    MPSCHEMA_BINARY = 0,        /**< Reserved: raw struct bytes (not handled by this library). */
-    MPSCHEMA_MSGPACK_CLEAR = 1, /**< Plain MessagePack. */
-    MPSCHEMA_MSGPACK_OBF = 2,   /**< MessagePack with a lightweight XOR obfuscation layer.
-                                     This is NOT encryption. */
-    MPSCHEMA_FORMAT_MAX = 3
-} mpschema_format_t;
-
 /** Maximum size of a framed message handled by the socket helpers (transport.h). */
 #define MPSCHEMA_MAX_MSG_SZ 4000
 /** Suggested buffer size for mpschema_print_json(). */

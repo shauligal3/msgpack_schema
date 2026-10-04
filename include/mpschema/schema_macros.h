@@ -112,7 +112,7 @@
 /**
  * A `char *mem` string. On encode, at most `sz - 1` characters are sent
  * (`sz == 0` means unlimited). On decode the string is copied into the arena
- * (see mpschema_decode_varlen_obj_by_format()).
+ * (see mpschema_decode_varlen_obj()).
  */
 #define MPSCHEMA_VARLEN_STRING(msg, mem, sz)                                   \
 {                                                                              \

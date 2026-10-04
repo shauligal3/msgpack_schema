@@ -364,9 +364,7 @@ static void test_varlen_and_refers(void)
     CHECK_EQ_INT(mpschema_encode_obj(&in, &doc_schema, buf, &sz), mpschema_ok);
 
     memset(&out, 0, sizeof(out));
-    CHECK_EQ_INT(mpschema_decode_varlen_obj_by_format(&out, sizeof(out), &doc_schema, buf, sz,
-                                                      MPSCHEMA_MSGPACK_CLEAR),
-                 mpschema_ok);
+    CHECK_EQ_INT(mpschema_decode_varlen_obj(&out, sizeof(out), &doc_schema, buf, sz), mpschema_ok);
     CHECK_EQ_STR(out.doc.title, "hello arena");
     CHECK(out.doc.anchor != NULL && out.doc.anchor->x == 7 && out.doc.anchor->y == 8);
     CHECK_EQ_INT(out.doc.path_ct, 2);
@@ -378,40 +376,13 @@ static void test_varlen_and_refers(void)
     {
         char small[sizeof(test_doc_t) + 4];
         memset(small, 0, sizeof(small));
-        CHECK_EQ_INT(mpschema_decode_varlen_obj_by_format(small, sizeof(small), &doc_schema, buf,
-                                                          sz, MPSCHEMA_MSGPACK_CLEAR),
+        CHECK_EQ_INT(mpschema_decode_varlen_obj(small, sizeof(small), &doc_schema, buf, sz),
                      mpschema_no_space);
     }
     /* output smaller than the struct itself */
-    CHECK_EQ_INT(
-        mpschema_decode_varlen_obj_by_format(&out, 4, &doc_schema, buf, sz, MPSCHEMA_MSGPACK_CLEAR),
-        mpschema_no_space);
+    CHECK_EQ_INT(mpschema_decode_varlen_obj(&out, 4, &doc_schema, buf, sz), mpschema_no_space);
     /* without an arena, varlen members cannot be decoded */
     CHECK_EQ_INT(mpschema_decode_obj(&out, &doc_schema, buf, sz), mpschema_invalid_param);
-}
-
-static void test_obfuscation(void)
-{
-    test_point_t in = {1234, 5678}, out = {0, 0};
-    char clear[32], obf[32], copy[32];
-    size_t clear_sz = sizeof(clear), obf_sz = sizeof(obf);
-
-    CHECK_EQ_INT(
-        mpschema_encode_obj_by_format(&in, &point_schema, clear, &clear_sz, MPSCHEMA_MSGPACK_CLEAR),
-        mpschema_ok);
-    CHECK_EQ_INT(
-        mpschema_encode_obj_by_format(&in, &point_schema, obf, &obf_sz, MPSCHEMA_MSGPACK_OBF),
-        mpschema_ok);
-    CHECK_EQ_INT(clear_sz, obf_sz);
-    CHECK(memcmp(clear, obf, clear_sz) != 0);
-
-    memcpy(copy, obf, obf_sz);
-    CHECK_EQ_INT(
-        mpschema_decode_obj_by_format(&out, &point_schema, obf, obf_sz, MPSCHEMA_MSGPACK_OBF),
-        mpschema_ok);
-    CHECK_EQ_INT(out.x, 1234);
-    CHECK_EQ_INT(out.y, 5678);
-    CHECK(memcmp(copy, obf, obf_sz) == 0); /* input buffer restored */
 }
 
 static void test_encode_errors(void)
@@ -471,8 +442,7 @@ static void test_fuzz_decode(void)
         memset(&out_shape, 0, sizeof(out_shape));
         (void)mpschema_decode_obj(&out_shape, &shape_schema, input, len);
         memset(&out_doc, 0, sizeof(out_doc));
-        (void)mpschema_decode_varlen_obj_by_format(&out_doc, sizeof(out_doc), &doc_schema, input,
-                                                   len, MPSCHEMA_MSGPACK_CLEAR);
+        (void)mpschema_decode_varlen_obj(&out_doc, sizeof(out_doc), &doc_schema, input, len);
     }
     CHECK(1);
 }
@@ -1055,7 +1025,6 @@ static const test_case_t k_tests[] = {
     {"bool_legacy_uint", test_bool_legacy_uint},
     {"nested", test_nested},
     {"varlen_and_refers", test_varlen_and_refers},
-    {"obfuscation", test_obfuscation},
     {"encode_errors", test_encode_errors},
     {"decode_errors", test_decode_errors},
     {"fuzz_decode", test_fuzz_decode},
