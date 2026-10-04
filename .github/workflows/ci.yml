@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+env:
+  MSGPACK_C_REF: c-6.1.0
+
+jobs:
+  build-test:
+    name: ${{ matrix.compiler }} / ${{ matrix.config }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+        config: [release, sanitize]
+    env:
+      CC: ${{ matrix.compiler }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache msgpack-c
+        id: cache-msgpack
+        uses: actions/cache@v4
+        with:
+          path: ~/msgpack-c-install
+          key: msgpack-c-${{ env.MSGPACK_C_REF }}-${{ runner.os }}
+
+      - name: Build msgpack-c
+        if: steps.cache-msgpack.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 -b "$MSGPACK_C_REF" https://github.com/msgpack/msgpack-c.git /tmp/msgpack-c
+          cmake -S /tmp/msgpack-c -B /tmp/msgpack-c/build \
+                -DMSGPACK_BUILD_TESTS=OFF -DMSGPACK_BUILD_EXAMPLES=OFF \
+                -DCMAKE_INSTALL_PREFIX="$HOME/msgpack-c-install"
+          cmake --build /tmp/msgpack-c/build -j
+          cmake --install /tmp/msgpack-c/build
+
+      - name: Configure
+        run: |
+          SAN=OFF
+          if [ "${{ matrix.config }}" = "sanitize" ]; then SAN=ON; fi
+          cmake -S . -B build \
+                -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+                -DCMAKE_PREFIX_PATH="$HOME/msgpack-c-install" \
+                -DMPSCHEMA_WERROR=ON -DMPSCHEMA_SANITIZE=$SAN
+
+      - name: Build
+        run: cmake --build build -j
+
+      - name: Test
+        run: |
+          export LD_LIBRARY_PATH="$HOME/msgpack-c-install/lib"
+          ctest --test-dir build --output-on-failure
+          ./build/examples/telemetry
+
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install -y clang-format clang-tidy doxygen
+
+      - name: clang-format
+        run: clang-format --dry-run --Werror include/mpschema/*.h src/*.c src/*.h tests/*.c tests/*.h examples/*.c
+
+      - name: Build msgpack-c
+        run: |
+          git clone --depth 1 -b "$MSGPACK_C_REF" https://github.com/msgpack/msgpack-c.git /tmp/msgpack-c
+          cmake -S /tmp/msgpack-c -B /tmp/msgpack-c/build -DMSGPACK_BUILD_TESTS=OFF -DMSGPACK_BUILD_EXAMPLES=OFF
+          cmake --build /tmp/msgpack-c/build -j
+          sudo cmake --install /tmp/msgpack-c/build
+
+      - name: clang-tidy
+        run: |
+          cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          clang-tidy -p build --warnings-as-errors='*' src/*.c
+
+      - name: Doxygen
+        run: doxygen Doxyfile

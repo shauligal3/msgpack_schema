@@ -1,0 +1,21 @@
+# Doxygen configuration for the mpschema API reference: run `doxygen Doxyfile`.
+PROJECT_NAME           = "mpschema"
+PROJECT_NUMBER         = 2.0.0
+PROJECT_BRIEF          = "Schema-driven MessagePack serialization for C structs"
+OUTPUT_DIRECTORY       = docs/api
+INPUT                  = include/mpschema README.md
+USE_MDFILE_AS_MAINPAGE = README.md
+FILE_PATTERNS          = *.h *.md
+RECURSIVE              = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+EXTRACT_ALL            = NO
+EXTRACT_STATIC         = NO
+JAVADOC_AUTOBRIEF      = YES
+MARKDOWN_SUPPORT       = YES
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = NO
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+WARN_IF_UNDOCUMENTED   = YES
+WARN_NO_PARAMDOC       = NO
+QUIET                  = YES

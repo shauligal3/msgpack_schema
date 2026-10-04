@@ -1,0 +1,26 @@
+---
+Checks: >
+  clang-analyzer-*,
+  bugprone-*,
+  cert-*,
+  misc-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-assignment-in-if-condition,
+  -cert-dcl37-c,
+  -cert-dcl51-cpp,
+  -misc-include-cleaner,
+  -readability-magic-numbers,
+  -readability-identifier-length,
+  -readability-isolate-declaration,
+  -readability-avoid-unconditional-preprocessor-if,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+  -misc-no-recursion
+WarningsAsErrors: ''
+HeaderFilterRegex: '(include/mpschema|src)/.*'
+CheckOptions:
+  - key: readability-function-cognitive-complexity.Threshold
+    value: '40'
+...
