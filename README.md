@@ -48,7 +48,7 @@ mpschema_env_encode(env, &point_schema, &p, buf, &len);   /* 13 bytes on the wir
   arbitrary chunks and identifies each object's type from the data itself.
 - **Hardened against hostile input.** Every write is bounds-checked, and a
   non-allocating pre-scan stops a few malicious bytes from making msgpack-c
-  reserve gigabytes (see [Security](#security)).
+  reserve gigabytes (see Security below).
 - **Socket helpers** for length-framed messages, plus debug printing and JSON
   rendering of any described struct.
 
@@ -270,7 +270,7 @@ clang-format --dry-run --Werror include/mpschema/*.h src/*.[ch] tests/*.[ch] exa
 cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 clang-tidy -p build src/*.c
 
-# API reference (HTML in docs/api)
+# API reference (HTML in apidocs/html)
 doxygen Doxyfile
 ```
 

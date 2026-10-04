@@ -88,16 +88,19 @@ typedef enum {
     SCHEMA_TAG_DOUBLE
 } mpschema_tag_type_t;
 
-/** @name Member flags (mpschema_member_t::sm_flags) @{ */
+/** @name Member flags (mpschema_member_t::sm_flags) */
+/** @{ */
 #define SM_REQUIRED 0x1          /**< Reserved, not enforced. */
 #define SM_HAS_DATA_OFF 0x2      /**< sm_data_off is valid. */
 #define SM_HAS_CT_OFF 0x4        /**< sm_ct_off is valid (member is an array with a counter). */
 #define SM_DEF_SUPPRESSION 0x8   /**< Reserved, not enforced. */
 #define SM_RECORD_VALUE_SET 0x10 /**< sm_set_prepend_off points to a "value was decoded" flag. */
+/** Both offsets are valid (arrays). */
 #define SM_HAS_BOTH_OFF (SM_HAS_DATA_OFF | SM_HAS_CT_OFF)
 /** @} */
 
-/** @name Reserved tags @{ */
+/** @name Reserved tags */
+/** @{ */
 #define MPSCHEMA_TAG_EOF 0xFFFF      /**< Terminates a member list. */
 #define MPSCHEMA_TAG_OBSOLETE 0xFFFE /**< Placeholder for a retired tag. */
 /** @} */
@@ -142,7 +145,8 @@ typedef struct mpschema_s {
 /** True if @p tag (a `const mpschema_member_t *`) is an obsolete placeholder. */
 #define is_mpschema_obsolete(tag) ((tag)->sm_tag == MPSCHEMA_TAG_OBSOLETE)
 
-/** @name Schema v2 @{ */
+/** @name Schema v2 */
+/** @{ */
 #define MPSCHEMAV2 2             /**< Version number of v2 schemas. */
 #define MPSCHEMAV2_OBJTYPE_TAG 0 /**< In v2, tag 0 carries the object type. */
 /** True if schema @p s embeds its object type on the wire (v2). */

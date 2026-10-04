@@ -31,10 +31,12 @@
 #include "transport.h"
 #include "types.h"
 
-/** Library version. */
-#define MPSCHEMA_VERSION_MAJOR 2
-#define MPSCHEMA_VERSION_MINOR 0
-#define MPSCHEMA_VERSION_PATCH 0
-#define MPSCHEMA_VERSION_STRING "2.0.0"
+/** @name Library version */
+/** @{ */
+#define MPSCHEMA_VERSION_MAJOR 2        /**< Incompatible API changes. */
+#define MPSCHEMA_VERSION_MINOR 0        /**< Backwards-compatible additions. */
+#define MPSCHEMA_VERSION_PATCH 0        /**< Bug fixes. */
+#define MPSCHEMA_VERSION_STRING "2.0.0" /**< The version as a string. */
+/** @} */
 
 #endif /* MPSCHEMA_MPSCHEMA_H */

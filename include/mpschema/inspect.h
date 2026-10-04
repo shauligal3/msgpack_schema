@@ -29,6 +29,10 @@ typedef int mpschema_foreach_cb_t(const mpschema_t *schema, const char *sm_name,
 
 /**
  * @brief Calls @p cb for every element of every non-nested member.
+ * @param schema       the object's schema
+ * @param obj          the object
+ * @param context      passed through to @p cb
+ * @param cb           the callback
  * @param skip_noexist if non-zero, values that would not be encoded (zero,
  *                     empty, NULL) are skipped
  * @return 0, or the first non-zero value returned by @p cb
@@ -38,7 +42,9 @@ int mpschema_foreach(const mpschema_t *schema, const void *obj, void *context,
 
 /**
  * @brief Dumps the present members of @p obj through the debug log hook.
- * @param ctxt optional title printed with an underline
+ * @param schema the object's schema
+ * @param obj    the object
+ * @param ctxt   optional title printed with an underline
  */
 void mpschema_print(const mpschema_t *schema, const void *obj, const char *ctxt);
 
@@ -52,10 +58,12 @@ typedef int (*mpschema_print_func_t)(void *arg, const char *str, size_t len);
  * strings are unquoted, which is convenient for log lines. Use
  * mpschema_print_json_2() with `quoted = 1` for strict JSON.
  *
- * @param ctxt optional raw prefix written before the object
- * @param buf  output buffer, always NUL-terminated
- * @param sz   in: capacity of @p buf; out: length written (excluding NUL).
- *             Output that does not fit is truncated.
+ * @param schema the object's schema
+ * @param obj    the object
+ * @param ctxt   optional raw prefix written before the object
+ * @param buf    output buffer, always NUL-terminated
+ * @param sz     in: capacity of @p buf; out: length written (excluding NUL).
+ *               Output that does not fit is truncated.
  */
 void mpschema_print_json(const mpschema_t *schema, const void *obj, const char *ctxt, char *buf,
                          size_t *sz);

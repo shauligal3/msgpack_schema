@@ -48,6 +48,7 @@ typedef struct mpschema_pipe_ mpschema_pipe_t;
 
 /**
  * @brief Allocates receive state for @p sock.
+ * @param sock a connected stream socket, ideally non-blocking
  * @param ctxt passed back to the message handler
  * @return the pipe, or NULL on allocation failure
  */

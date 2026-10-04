@@ -88,7 +88,10 @@ int mpschema_env_decode_type(mpschema_env_t *env, const char *in_buf, size_t sz,
 
 /**
  * @brief Decodes the object parsed by mpschema_env_decode_type().
- * @param obj output struct of @p sz bytes
+ * @param env    the environment
+ * @param schema the v2 schema matching the object type
+ * @param obj    output struct of @p sz bytes
+ * @param sz     size of @p obj; writes beyond it are refused
  * @return ::mpschema_ok, ::mpschema_not_found if nothing was parsed,
  *         ::mpschema_unsupported for non-v2 schemas, or a decode error
  */
@@ -113,6 +116,7 @@ int mpschema_env_feed(mpschema_env_t *env, const char *in_buf, size_t in_sz);
  *
  * Any previously extracted object that was not decoded is discarded.
  *
+ * @param env          the environment
  * @param out_obj_type out: type of the next object
  * @return ::mpschema_ok, ::mpschema_not_found if no complete object is
  *         buffered yet, ::mpschema_no_mem, or ::mpschema_malformed. A
@@ -130,7 +134,10 @@ int mpschema_env_next_obj_size(mpschema_env_t *env, const mpschema_t *schema, si
 
 /**
  * @brief Decodes the pending object into @p out_obj and releases it.
- * @param out_sz size of @p out_obj; writes beyond it are refused
+ * @param env     the environment
+ * @param schema  the v2 schema matching the object type
+ * @param out_obj output struct
+ * @param out_sz  size of @p out_obj; writes beyond it are refused
  * @return ::mpschema_ok, ::mpschema_no_space, ::mpschema_not_found,
  *         ::mpschema_unsupported or another decode error
  */
@@ -143,6 +150,10 @@ int mpschema_env_next_decode(mpschema_env_t *env, const mpschema_t *schema, void
  * With an external writer, @p out_buf is passed to the writer as its
  * argument; otherwise it is a byte buffer of `*inout_sz` bytes.
  *
+ * @param env      the environment
+ * @param schema   a v2 schema
+ * @param in_obj   the struct to encode
+ * @param out_buf  output buffer, or the writer argument (see above)
  * @param inout_sz in: capacity of @p out_buf (ignored with an external
  *                 writer); out: bytes written
  * @return ::mpschema_ok, ::mpschema_invalid_param, ::mpschema_unsupported,

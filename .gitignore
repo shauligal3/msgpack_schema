@@ -4,7 +4,7 @@ cmake-build-*/
 compile_commands.json
 
 # Generated documentation
-docs/api/
+apidocs/
 
 # Editors and OS
 .vscode/

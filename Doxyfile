@@ -2,7 +2,7 @@
 PROJECT_NAME           = "mpschema"
 PROJECT_NUMBER         = 2.0.0
 PROJECT_BRIEF          = "Schema-driven MessagePack serialization for C structs"
-OUTPUT_DIRECTORY       = docs/api
+OUTPUT_DIRECTORY       = apidocs
 INPUT                  = include/mpschema README.md
 USE_MDFILE_AS_MAINPAGE = README.md
 FILE_PATTERNS          = *.h *.md
